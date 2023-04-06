@@ -1,4 +1,5 @@
-﻿using FirstTryDDD.Infrastructure.Data;
+﻿using FirstTryDDD.API.Services;
+using FirstTryDDD.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace FirstTryDDD.API.Extensions
@@ -12,7 +13,7 @@ namespace FirstTryDDD.API.Extensions
 
         public static IServiceCollection AddBusinessServices(this IServiceCollection services) 
         {
-            return services;
+            return services.AddScoped<AuthorServices>();
         }
     }
 }

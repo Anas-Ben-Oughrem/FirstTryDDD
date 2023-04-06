@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FirstTryDDD.SharedKernel.Interfaces
 {
-    internal interface IAgreggateRoot
+    public interface IAgreggateRoot
     {
     }
 }
