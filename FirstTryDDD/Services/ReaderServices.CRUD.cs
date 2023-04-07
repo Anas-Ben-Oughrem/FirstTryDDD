@@ -1,6 +1,6 @@
-﻿using FirstTryDDD.API.DTOs.AuthorDTOs;
+﻿using FirstTryDDD.API.DTOs.ReaderDTOs;
 using FirstTryDDD.API.Services.AbstractionServices;
-using FirstTryDDD.Core.AggregateModels.AuthorAggregate;
+using FirstTryDDD.Core.AggregateModels.ReaderAggregate;
 using FirstTryDDD.Infrastructure.Data;
 using FirstTryDDD.SharedKarnel.Enums;
 using FirstTryDDD.SharedKarnel.Extensions;
@@ -8,38 +8,37 @@ using FirstTryDDD.SharedKarnel.Models;
 using FirstTryDDD.SharedKernel.Models;
 using FirstTryDDD.SharedKernel.Services;
 using Microsoft.EntityFrameworkCore;
-using NuGet.Versioning;
 using SCodes = FirstTryDDD.SharedKernel.Models.StatusCodes;
-
 
 namespace FirstTryDDD.API.Services
 {
-    public partial class AuthorServices : BaseServices
+    public class ReaderServicesCRUD : BaseServices
     {
         #region Local Variables + Constructor
+
         private readonly AppDbContext _context;
-        public AuthorServices(AppDbContext context)
+        public ReaderServicesCRUD(AppDbContext context)
         {
             _context = context;
         }
         #endregion
 
-        #region Main methods
+        #region Main Methods
 
         #region GetAllAsync
         public async Task<Response> GetAllAsync(int pageNumber, int pageSize)
         {
             try
             {
-                IEnumerable<Author> authors = await _context.Author.Skip((pageNumber - 1) * pageSize)
-                                                                   .Take(pageSize)
-                                                                   .ToListAsync();
+                IEnumerable<Reader> readers = await _context.Reader.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
                 return new GlobalResponse
                 {
                     Result = ResponseResult.Success,
                     Status = SCodes.Status200OK,
-                    Object = PagedList<GetAllAuthorsResponse>.ToPagedList(authors.ToCastedList(a => new GetAllAuthorsResponse(a)), await _context.Author.CountAsync(), pageNumber, pageSize)
+                    Object = PagedList<GetAllReadersResponse>.ToPagedList(readers.ToCastedList(r => new GetAllReadersResponse(r)), await _context.Reader.CountAsync(), pageNumber, pageSize)
                 };
             }
             catch (Exception ex)
@@ -51,25 +50,25 @@ namespace FirstTryDDD.API.Services
         #endregion
 
         #region GetByIdAsync
-        public async Task<Response> GetByIdAsync(Guid id)
+        public async Task<Response> GetById(Guid id)
         {
             try
             {
-                Author author = await _context.Author.FirstOrDefaultAsync(a => a.Id == id);
+                Reader reader = await _context.Reader.FirstOrDefaultAsync(a => a.Id == id);
 
-                if (author == null)
+                if (reader == null)
                     return new SimpleErrorResponse
                     {
                         Result = ResponseResult.Error,
                         Status = SCodes.Status404NotFound,
-                        MsgException = "Cannot find this author"
+                        MsgException = "Cannot find this reader"
                     };
 
                 return new GlobalResponse
                 {
                     Result = ResponseResult.Success,
                     Status = SCodes.Status200OK,
-                    Object = new GetAuthorByIdResponse(author)
+                    Object = new GetReaderByIdResponse(reader)
                 };
             }
             catch (Exception ex)
@@ -79,32 +78,31 @@ namespace FirstTryDDD.API.Services
         }
         #endregion
 
+
         #region PostAsync
-        public async Task<Response> PostAsync(PostAuthorRequest req)
+        public async Task<Response> PostAsync(PostReaderRequest req)
         {
             try
             {
                 DateTime today = DateTime.Now;
 
-                Author author = new()
+                Reader reader = new()
                 {
-                    PhoneNumber = req.PhoneNumber,
                     Name = req.Name,
                     Email = req.Email,
                     Password = req.Password,
-                    Age = req.Age,
                     CreatedDate = today,
                     UpdatedDate = today,
                 };
 
-                _context.Author.Add(author);
+                _context.Reader.Add(reader);
                 await _context.SaveChangesAsync();
 
                 return new GlobalResponse
                 {
                     Result = ResponseResult.Success,
                     Status = SCodes.Status201Created,
-                    Object = new PostAuthorResponse(author)
+                    Object = new PostReaderResponse(reader)
                 };
             }
             catch (Exception ex)
@@ -114,28 +112,27 @@ namespace FirstTryDDD.API.Services
         }
         #endregion
 
+
         #region PutAsync
-        public async Task<Response> PutAsync(PutAuthorRequest req)
+        public async Task<Response> PutAsync(PutReaderRequest req)
         {
             try
             {
-                Author author = await _context.Author.FindAsync(req.Id);
+                Reader reader = await _context.Reader.FindAsync(req.Id);
 
-                if (author == null)
+                if (reader == null)
                     return new SimpleErrorResponse
                     {
                         Result = ResponseResult.Error,
                         Status = SCodes.Status404NotFound,
-                        MsgException = "Cannot find this author"
+                        MsgException = "Cannot find this reader"
                     };
 
-                author.Name = GenericServices<string>.IsDefaultValue(req.Name) ? author.Name : req.Name;
-                author.PhoneNumber = GenericServices<string>.IsDefaultValue(req.PhoneNumber) ? author.PhoneNumber : req.PhoneNumber;
-                author.Email = GenericServices<string>.IsDefaultValue(req.Email) ? author.Email : req.Email;
-                author.Password = GenericServices<string>.IsDefaultValue(req.Password) ? author.Password : req.Password;
-                author.Age = GenericServices<int?>.IsDefaultValue(req.Age) ? author.Age : req.Age;
+                reader.Name = GenericServices<string>.IsDefaultValue(req.Name) ? reader.Name : req.Name;
+                reader.Email = GenericServices<string>.IsDefaultValue(req.Email) ? reader.Email : req.Email;
+                reader.Password = GenericServices<string>.IsDefaultValue(req.Password) ? reader.Password : req.Password;
 
-                author.UpdatedDate = DateTime.UtcNow;
+                reader.UpdatedDate = DateTime.UtcNow;
 
                 await _context.SaveChangesAsync();
 
@@ -143,7 +140,7 @@ namespace FirstTryDDD.API.Services
                 {
                     Result = ResponseResult.Success,
                     Status = SCodes.Status200OK,
-                    Object = new PutAuthorResponse(author)
+                    Object = new PutReaderResponse(reader)
                 };
             }
             catch (Exception ex)
@@ -159,17 +156,17 @@ namespace FirstTryDDD.API.Services
             try
             {
 
-                Author author = await _context.Author.FindAsync(id);
+                Reader reader = await _context.Reader.FindAsync(id);
 
-                if (author == null)
+                if (reader == null)
                     return new SimpleErrorResponse
                     {
                         Result = ResponseResult.Error,
                         Status = SCodes.Status404NotFound,
-                        MsgException = "Cannot find this author"
+                        MsgException = "Cannot find this reader"
                     };
 
-                _context.Author.Remove(author);
+                _context.Reader.Remove(reader);
                 await _context.SaveChangesAsync();
 
                 return new Response
@@ -182,9 +179,9 @@ namespace FirstTryDDD.API.Services
             {
                 return GetException(ex);
             }
-            #endregion
-
-            #endregion
         }
+        #endregion
+
+        #endregion
     }
 }

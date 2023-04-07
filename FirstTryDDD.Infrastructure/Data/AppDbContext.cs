@@ -19,6 +19,11 @@ namespace FirstTryDDD.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Author>().HasIndex(a => a.PhoneNumber).IsUnique();
+            modelBuilder.Entity<Author>().HasIndex(a => a.Email).IsUnique();
+            modelBuilder.Entity<Reader>().HasIndex(a => a.Email).IsUnique();
+            modelBuilder.Entity<Reader>().HasIndex(a => a.UserName).IsUnique();
+
             modelBuilder.Entity<Author>().HasMany(a=>a.Books).WithOne(b=>b.Author).HasForeignKey(b=>b.AuthorId).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Reader>().HasMany(r=>r.ReaderBookList).WithOne(l=>l.Reader).HasForeignKey(b=>b.ReaderId).OnDelete(DeleteBehavior.Cascade); 
@@ -30,5 +35,9 @@ namespace FirstTryDDD.Infrastructure.Data
 
         public DbSet<Author> Author { get; set;}
         public DbSet<Book> Book { get; set;}
+        public DbSet<Reader> Reader { get; set;}
+        public DbSet<ReaderBookList> ReaderBookList { get; set;}
+        public DbSet<BookCategory> Category { get; set;}
+
     }
 }
