@@ -12,12 +12,12 @@ using SCodes = FirstTryDDD.SharedKernel.Models.StatusCodes;
 
 namespace FirstTryDDD.API.Services
 {
-    public partial class BookServicesCRUD : BaseServices
+    public partial class BookServices : BaseServices
     {
         #region Local Variables + Constructor
 
         private readonly AppDbContext _context;
-        public BookServicesCRUD(AppDbContext context)
+        public BookServices(AppDbContext context)
         {
             _context = context;
         }
@@ -88,7 +88,10 @@ namespace FirstTryDDD.API.Services
 
                 Book book = new()
                 {
-
+                    Title = req.Title,
+                    Uri = req.Uri,
+                    PublishedDate = today,
+                    TotalSells = req.TotalSells,
                     CreatedDate = today,
                     UpdatedDate = today,
                 };
@@ -150,7 +153,7 @@ namespace FirstTryDDD.API.Services
 
 
         #region DeleteAsync
-        public async Task<Response> DeleteAsync(Guid id)
+        public async Task<Response> DeleteAsync(int id)
         {
             try
             {

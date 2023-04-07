@@ -12,12 +12,12 @@ using SCodes = FirstTryDDD.SharedKernel.Models.StatusCodes;
 
 namespace FirstTryDDD.API.Services
 {
-    public class ReaderServicesCRUD : BaseServices
+    public partial class ReaderServices : BaseServices
     {
         #region Local Variables + Constructor
 
         private readonly AppDbContext _context;
-        public ReaderServicesCRUD(AppDbContext context)
+        public ReaderServices(AppDbContext context)
         {
             _context = context;
         }
@@ -91,6 +91,7 @@ namespace FirstTryDDD.API.Services
                     Name = req.Name,
                     Email = req.Email,
                     Password = req.Password,
+                    UserName = req.UserName,
                     CreatedDate = today,
                     UpdatedDate = today,
                 };

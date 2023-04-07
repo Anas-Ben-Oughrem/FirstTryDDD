@@ -13,7 +13,7 @@ namespace FirstTryDDD.API.Extensions
 
         public static IServiceCollection AddBusinessServices(this IServiceCollection services) 
         {
-            return services.AddScoped<AuthorServices>();
+            return services.AddScoped<AuthorServices>().AddScoped<BookServices>().AddScoped<ReaderServices>();
         }
     }
 }
